@@ -1,0 +1,36 @@
+.active {
+    background-color: #f8c76495;
+    color: #ffffff;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.not-active {
+    background-color: #f8c76400;
+    color: #ffffff;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.not-active:hover {
+    background-color: #f8c76495;
+    color: #ffffff;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.navbar {
+    background-color: rgba(255, 255, 255, 0.457); 
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: larger;
+    text-align: center;
+    color: #ffffff;
+}
+
+.center-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+  

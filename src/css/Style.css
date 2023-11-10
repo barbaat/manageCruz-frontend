@@ -1,0 +1,32 @@
+#root {
+  background-image: url('../assets/images/fondo.jpg');
+  background-repeat: no-repeat;
+  background-color: rgba(0, 0, 0, 0);
+  background-blend-mode: overlay;
+  background-size: cover;
+  color: rgb(255, 255, 255);
+  background-attachment: fixed;
+  min-height: 100vh;
+  width: 100wh;
+  font-family: 'Fire Code', sans-serif;
+}
+
+.card {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: rgb(255, 255, 255);
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.btn .btn-primary {
+  background-color: rgb(159, 149, 61);
+  color: white;
+}

@@ -1,0 +1,86 @@
+import { v4 as uuidv4 } from 'uuid';
+
+const enumObject = (list) => {
+    const objectMap = {
+        "PRIMERO_PRIMARIA": '1º Primaria',
+        "SEGUNDO_PRIMARIA": '2º Primaria',
+        "TERCERO_PRIMARIA": '3º Primaria',
+        "CUARTO_PRIMARIA": '4º Primaria',
+        "QUINTO_PRIMARIA": '5º Primaria',
+        "SEXTO_PRIMARIA": '6º Primaria',
+        "PRIMERO_SECUNDARIA": '1º Secundaria',
+        "SEGUNDO_SECUNDARIA": '2º Secundaria',
+        "TERCERO_SECUNDARIA": '3º Secundaria',
+        "CUARTO_SECUNDARIA": '4º Secundaria',
+        "PRIMERO_BACHILLERATO": '1º Bachillerato',
+        "SEGUNDO_BACHILLERATO": '2º Bachillerato',
+        "MASCULINO": 'Masculino',
+        "FEMENINO": 'Femenino',
+        "A_CORUNA": 'A Coruña',
+        "ALAVA": 'Álava',
+        "ALBACETE": 'Albacete',
+        "ALICANTE": 'Alicante',
+        "ALMERIA": 'Almería',
+        "ASTURIAS": 'Asturias',
+        "AVILA": 'Ávila',
+        "BADAJOZ": 'Badajoz',
+        "BARCELONA": 'Barcelona',
+        "BURGOS": 'Burgos',
+        "CACERES": 'Cáceres',
+        "CADIZ": 'Cádiz',
+        "CANTABRIA": 'Cantabria',
+        "CASTELLON": 'Castellón',
+        "CEUTA": 'Ceuta',
+        "CIUDAD_REAL": 'Ciudad Real',
+        "CORDOBA": 'Córdoba',
+        "CUENCA": 'Cuenca',
+        "GIRONA": 'Gerona',
+        "GRANADA": 'Granada',
+        "GUADALAJARA": 'Guadalajara',
+        "GUIPUZCOA": 'Guipúzcoa',
+        "HUELVA": 'Huelva',
+        "HUESCA": 'Huesca',
+        "ISLAS_BALEARES": 'Islas Baleares',
+        "JAEN": 'Jaén',
+        "LA_RIOJA": 'La Rioja',
+        "LAS_PALMAS": 'Las Palmas',
+        "LEON": 'León',
+        "LLEIDA": 'Lérida',
+        "LUGO": 'Lugo',
+        "MADRID": 'Madrid',
+        "MALAGA": 'Málaga',
+        "MELILLA": 'Melilla',
+        "MURCIA": 'Murcia',
+        "NAVARRA": 'Navarra',
+        "OURENSE": 'Orense',
+        "PALENCIA": 'Palencia',
+        "PONTEVEDRA": 'Pontevedra',
+        "SALAMANCA": 'Salamanca',
+        "SANTA_CRUZ_DE_TENERIFE": 'Santa Cruz de Tenerife',
+        "SEGOVIA": 'Segovia',
+        "SEVILLA": 'Sevilla',
+        "SORIA": 'Soria',
+        "TARRAGONA": 'Tarragona',
+        "TENERIFE": 'Tenerife',
+        "TERUEL": 'Teruel',
+        "TOLEDO": 'Toledo',
+        "VALENCIA": 'Valencia',
+        "VALLADOLID": 'Valladolid',
+        "VIZCAYA": 'Vizcaya',
+        "ZAMORA": 'Zamora',
+        "ZARAGOZA": 'Zaragoza',
+    };
+
+    list.forEach((eachObject, index) => {
+        const label = objectMap[eachObject] || 'Objeto no encontrado ❌';
+        list[index] = {
+            id: uuidv4(),
+            value: eachObject,
+            label,
+        };
+    });
+
+    return list;
+};
+
+export default { enumObject };

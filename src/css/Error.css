@@ -1,0 +1,26 @@
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
+
+.falling-item {
+  position: absolute;
+  animation: fallAnimation linear infinite;
+}
+
+@keyframes fallAnimation {
+  0% {
+    transform: translateY(-10%);
+    opacity: 0.2;
+  }
+
+  100% {
+    transform: translateY(100vh);
+    opacity: 0.4;
+  }
+}
