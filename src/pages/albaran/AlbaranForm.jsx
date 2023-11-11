@@ -272,6 +272,14 @@ export default function AlbaranForm() {
 
     // Manejador del botón de guardar albarán
     const handleSaveAlbaran = async () => {
+        if (albaran.numeroCliente == "") {
+            alert("Debes seleccionar un cliente");
+            return;
+        }
+        if (albaran.detalles.length === 0) {
+            alert("Debes añadir al menos un detalle");
+            return;
+        }
         const detallesToSave = albaran.detalles.map(detalle => ({
             ...detalle,
             producto: findProductByName(detalle.nombreProducto),
