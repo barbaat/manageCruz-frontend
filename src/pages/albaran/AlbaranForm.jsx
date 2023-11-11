@@ -10,13 +10,6 @@ import "../../css/AlbaranForm.css"
 import albaranService from "../../services/api/albaran.js";
 import userService from "../../services/api/users.js";
 
-// Datos de prueba para los clientes y los productos
-const clientes = [
-    { value: "37", label: "B91114306 - Electrodomésticos S.A." },
-    { value: "42", label: "B12345678 - Muebles y Decoración S.L." },
-    { value: "51", label: "B98765432 - Informática y Comunicaciones S.A." },
-];
-
 // Función para calcular el importe de un detalle
 const calcularImporte = (unidades, precio, porcentajeDescuento) => {
     return unidades * precio * (1 - porcentajeDescuento / 100);
@@ -57,9 +50,9 @@ const calcularTotal = (
 };
 
 export default function AlbaranForm() {
-
+    const idAleatorio = Math.floor(Math.random() * 1000) + 1;
     const [albaran, setAlbaran] = useState({
-        id: 1,
+        id: idAleatorio,
         fecha: new Date(),
         numeroCliente: "",
         dni: "",
@@ -78,7 +71,7 @@ export default function AlbaranForm() {
 
     // Estado para el detalle actual
     const [detalle, setDetalle] = useState({
-        id: "",
+        id: idAleatorio,
         unidades: 0,
         precio: 0,
         porcentajeDescuento: 0,
@@ -133,9 +126,9 @@ export default function AlbaranForm() {
 
     // Manejador del cambio de producto
     const handleProductoChange = (option) => {
+        // const idAleatorio = Math.floor(Math.random() * 1000) + 1;
         setDetalle({
             ...detalle,
-            id: uuidv4(),
             precio: option.value.precio,
             nombreProducto: option.value.nombre,
             descripcionProducto: option.value.descripcion,
@@ -196,7 +189,6 @@ export default function AlbaranForm() {
             total,
         });
         setDetalle({
-            id: "",
             unidades: 0,
             precio: 0,
             porcentajeDescuento: 0,
@@ -272,19 +264,42 @@ export default function AlbaranForm() {
         setAlbaran({ ...albaran, formaPago: e.target.value });
     };
 
+    // Función para buscar un producto por su nombre
+    const findProductByName = (nombre) => {
+        const res = productos.find(producto => producto.value.nombre === nombre).value;
+        return res;
+    }
+
     // Manejador del botón de guardar albarán
-    const handleSaveAlbaran = () => {
-        console.log(albaran);
+    const handleSaveAlbaran = async () => {
+        const detallesToSave = albaran.detalles.map(detalle => ({
+            ...detalle,
+            producto: findProductByName(detalle.nombreProducto),
+            id_producto: findProductByName(detalle.nombreProducto).id,
+        }));
+        const clienteToSave = clientes.find(cliente => cliente.value.id == albaran.numeroCliente).value;
+        const albaranToSave = {
+            ...albaran,
+            detalles: detallesToSave,
+            cliente: clienteToSave
+        };
+        const albaranToSaveWithoutDetalles = { ...albaranToSave };
+        delete albaranToSaveWithoutDetalles.detalles;
+        const albaran_guardado = await albaranService.newAlbaran(albaranToSaveWithoutDetalles);
+        for (const detalle of albaranToSave.detalles) {
+            detalle.albaran = albaran_guardado;
+            await albaranService.newDetalleAlbaran(detalle);
+        }
         alert("Albarán guardado con éxito");
     };
 
 
     const customStyles = {
-        option: (provided, state) => ({
+        option: (provided,) => ({
             ...provided,
             color: 'black',
         }),
-        singleValue: (provided, state) => ({
+        singleValue: (provided,) => ({
             ...provided,
             color: 'black',
         }),
@@ -336,7 +351,7 @@ export default function AlbaranForm() {
                             <Col sm="6">
                                 <Form.Group as={Row} className="mb-3">
                                     <Form.Label column sm="2">
-                                        NIF/CIF
+                                        dni
                                     </Form.Label>
                                     <Col sm="10">
                                         <Form.Control
