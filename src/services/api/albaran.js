@@ -12,5 +12,9 @@ const getAllAlbaran = async () => {
     return data
 }
 
+const newAlbaran = async alb => {
+    const { data } = await axiosWithToken(baseUrl).post(baseUrl + "/new", alb)
+    return data
+  }
 
-export default { getAlbaran, getAllAlbaran }
+export default { getAlbaran, getAllAlbaran, newAlbaran }
