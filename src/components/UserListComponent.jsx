@@ -2,17 +2,12 @@ import { BsFillArrowUpCircleFill, BsFillArrowDownCircleFill } from "react-icons/
 import CardProfile from './CardProfileComponent.jsx';
 import { Row, Col } from 'react-bootstrap';
 import { useListAnimation } from '../services/utils/animationsList.js';
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
-import userService from '../services/api/users.js';
+import { useState } from 'react';
 
-
-export default function UsersListComponent({ users, title, role = '', addRol = false }) {
+export default function UsersListComponent({ users }) {
 
     const [sortOrder, setSortOrder] = useState('asc');
     const [search, setSearch] = useState('');
-    const [userLog, setUserLog] = useState();
     const [parent,] = useListAnimation();
 
     const handleSort = () => {
@@ -38,18 +33,10 @@ export default function UsersListComponent({ users, title, role = '', addRol = f
 
     const handleChange = (setState) => (event) => setState(event.target.value);
 
-    useEffect(() => {
-        const getUserLog = async () => {
-            const userLog = await userService.getUserLogeado();
-            setUserLog(userLog);
-        }
-        getUserLog();
-    }, []);
-
 
     return (
         <>
-            <h1 className='pb-4 mt-5'><b>Lista de {title}</b></h1>
+            <h1 className='pb-4 mt-5'><b>Lista de usuarios</b></h1>
             <Row>
                 <Col md="3">
                     <button className="btn btn-link" onClick={handleSort}>
@@ -79,7 +66,7 @@ export default function UsersListComponent({ users, title, role = '', addRol = f
             <Row ref={parent}>
                 {filteredUsers.length === 0 && (
                     <Col>
-                        <h3>No hay {title} que coincidan con la búsqueda</h3>
+                        <h3>No hay usuario que coincida con la búsqueda</h3>
                     </Col>
                 )}
                 {sortUsers(filteredUsers).map((user) => (
@@ -88,13 +75,6 @@ export default function UsersListComponent({ users, title, role = '', addRol = f
                     </Col>
                 ))}
             </Row>
-            {addRol && userLog && userLog.rolUser == 'ADMIN' &&
-                <div className='pt-4'>
-                    <Link to={`/users/new?role=${role}`}>
-                        <Button className='btn btn-primary' style={{ background: "purple", color: "white" }}>Registrar {title}</Button>
-                    </Link>
-                </div>
-            }
         </>
     );
 }

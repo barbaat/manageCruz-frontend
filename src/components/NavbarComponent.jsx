@@ -51,6 +51,7 @@ export default function CustomNavbar() {
           {userLog.rolUser == 'ADMIN' && (
             <>
               <Nav.Link href="/users" className={location.pathname == '/users' ? 'active' : 'not-active'}>Usuarios</Nav.Link>
+              <Nav.Link href="/albaran" className={location.pathname == '/albaran' ? 'active' : 'not-active'}>Albaranes</Nav.Link>
             </>
           )}
         </Nav>

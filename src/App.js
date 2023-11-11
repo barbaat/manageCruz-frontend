@@ -15,6 +15,7 @@ import userService from '../src/services/api/users.js'
 import '../src/css/Style.css';
 import '../src/css/Loader.css';
 import AlbaranDetails from './pages/albaran/AlbaranDetails.jsx';
+import AlbaranList from './pages/albaran/AlbaranList.jsx';
 
 
 
@@ -61,6 +62,7 @@ const App = () => {
             <Route exact path="/users/edit/:username" element={<UserEdit />} />
 
             <Route exact path="/albaran/:id" element={<AlbaranDetails />} />
+            <Route exact path="/albaran" element={<AlbaranList />} />
 
             <Route exact path="/notAuthorized" element={<NotAuth />} />
 
