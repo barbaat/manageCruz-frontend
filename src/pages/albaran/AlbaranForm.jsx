@@ -8,6 +8,7 @@ import CustomNavbar from '../../components/NavbarComponent.jsx';
 import { createFilter } from 'react-select';
 import "../../css/AlbaranForm.css"
 import albaranService from "../../services/api/albaran.js";
+import userService from "../../services/api/users.js";
 
 // Datos de prueba para los clientes y los productos
 const clientes = [
@@ -16,26 +17,26 @@ const clientes = [
     { value: "51", label: "B98765432 - Informática y Comunicaciones S.A." },
 ];
 
-const productos = [
-    {
-        value: "42800056",
-        label: "Termostato digital ELIWELL EW961 (GREEN)",
-        precio: 23.4,
-        descripcion: "Termostato para uso industrial",
-    },
-    {
-        value: "42800051",
-        label: "Termostato DINFER IC200 ATX ( GREEN)",
-        precio: 11.49,
-        descripcion: "Termostato DINFER para aplicaciones industriales",
-    },
-    {
-        value: "42800101",
-        label: "Ventilador 10W",
-        precio: 7.46,
-        descripcion: "Ventilador de 10W para sistemas de refrigeración",
-    },
-];
+// const productos = [
+//     {
+//         value: "42800056",
+//         label: "Termostato digital ELIWELL EW961 (GREEN)",
+//         precio: 23.4,
+//         descripcion: "Termostato para uso industrial",
+//     },
+//     {
+//         value: "42800051",
+//         label: "Termostato DINFER IC200 ATX ( GREEN)",
+//         precio: 11.49,
+//         descripcion: "Termostato DINFER para aplicaciones industriales",
+//     },
+//     {
+//         value: "42800101",
+//         label: "Ventilador 10W",
+//         precio: 7.46,
+//         descripcion: "Ventilador de 10W para sistemas de refrigeración",
+//     },
+// ];
 
 // Función para calcular el importe de un detalle
 const calcularImporte = (unidades, precio, porcentajeDescuento) => {
@@ -82,8 +83,7 @@ export default function AlbaranForm() {
         id: 1,
         fecha: new Date(),
         numeroCliente: "",
-        nifCif: "",
-        vendedor: "",
+        dni: "",
         detalles: [],
         totalBruto: 0,
         porcentajeDescuento: 0,
@@ -109,16 +109,32 @@ export default function AlbaranForm() {
         referenciaProducto: "",
     });
 
-    // const [productos, setProductos] = useState([]);
+    const [productos, setProductos] = useState([]);
+    const [clientes, setClientes] = useState([]);
 
-    // useEffect(() => {
-    //     const getProducts = async () => {
-    //         const results = await albaranService.getAllProductos();
-    //         setProductos(results);
-    //         console.log(results);
-    //     };
-    //     getProducts();
-    // }, []);
+    useEffect(() => {
+        const getProducts = async () => {
+            const results = await albaranService.getAllProductos();
+            const productosConEtiquetas = results.map(producto => ({
+                label: producto.nombre,
+                value: producto
+            }));
+            setProductos(productosConEtiquetas);
+            console.log(productosConEtiquetas);
+        };
+        getProducts();
+        const getClientes = async () => {
+            const results = await userService.usersByRol("CLIENTE");
+            const clientesConEtiquetas = results.map(cliente => ({
+                label: `${cliente.name} ${cliente.lastName}`,
+                value: cliente
+            }));
+            setClientes(clientesConEtiquetas);
+            console.log(clientesConEtiquetas);
+        }
+        getClientes();
+    }, []);
+
 
     // Manejador del cambio de fecha
     const handleFechaChange = (date) => {
@@ -127,7 +143,11 @@ export default function AlbaranForm() {
 
     // Manejador del cambio de cliente
     const handleClienteChange = (option) => {
-        setAlbaran({ ...albaran, numeroCliente: option.value, nifCif: option.label.split(" - ")[0] });
+        setAlbaran({
+            ...albaran,
+            numeroCliente: option.value.id,
+            dni: option.value.dni,
+        });
     };
 
     // Manejador del cambio de vendedor
@@ -137,13 +157,14 @@ export default function AlbaranForm() {
 
     // Manejador del cambio de producto
     const handleProductoChange = (option) => {
+        console.log(option);
         setDetalle({
             ...detalle,
             id: uuidv4(),
-            precio: option.precio,
-            nombreProducto: option.label,
-            descripcionProducto: option.descripcion,
-            referenciaProducto: option.value,
+            precio: option.value.precio,
+            nombreProducto: option.value.nombre,
+            descripcionProducto: option.value.descripcion,
+            referenciaProducto: option.value.referencia,
         });
     };
 
@@ -269,7 +290,6 @@ export default function AlbaranForm() {
 
     // Manejador del botón de guardar albarán
     const handleSaveAlbaran = () => {
-        // Aquí se podría enviar el albarán al servidor o a una base de datos
         console.log(albaran);
         alert("Albarán guardado con éxito");
     };
@@ -278,11 +298,11 @@ export default function AlbaranForm() {
     const customStyles = {
         option: (provided, state) => ({
             ...provided,
-            color: 'black', // Cambia el color del texto a negro
+            color: 'black',
         }),
         singleValue: (provided, state) => ({
             ...provided,
-            color: 'black', // Cambia el color del texto a negro
+            color: 'black',
         }),
     };
 
@@ -337,7 +357,7 @@ export default function AlbaranForm() {
                                     <Col sm="10">
                                         <Form.Control
                                             type="text"
-                                            value={albaran.nifCif}
+                                            value={albaran.dni}
                                             readOnly
                                             className="read-only"
                                         />
@@ -350,8 +370,9 @@ export default function AlbaranForm() {
                                     <Col sm="10">
                                         <Form.Control
                                             type="text"
-                                            value={albaran.vendedor}
-                                            onChange={handleVendedorChange}
+                                            value={albaran.numeroCliente}
+                                            readOnly
+                                            className="read-only"
                                         />
                                     </Col>
                                 </Form.Group>
@@ -367,10 +388,7 @@ export default function AlbaranForm() {
                                     <Col sm="10">
                                         <Select
                                             options={productos}
-                                            value={productos.find(
-                                                (producto) =>
-                                                    producto.id === detalle.referenciaProducto
-                                            )}
+                                            value={productos.find((producto) => producto.value === detalle.referenciaProducto)}
                                             onChange={handleProductoChange}
                                             components={{ Input: CustomSelectInput }}
                                             filterOption={createFilter({ ignoreAccents: false })}
@@ -412,7 +430,7 @@ export default function AlbaranForm() {
                                     <Col sm="10">
                                         <Form.Control
                                             type="number"
-                                            value={detalle.porcentajeDescuento}
+                                            value={detalle.porcentajeDescuento || ''}
                                             onChange={handlePorcentajeDescuentoChange}
                                         />
                                     </Col>

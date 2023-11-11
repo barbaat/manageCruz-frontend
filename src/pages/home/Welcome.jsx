@@ -68,13 +68,11 @@ export default function Welcome() {
         <>
           <CustomNavbar />
           <Container fluid>
-            <br />
-            <br />
-            <br />
-            <br />
-            <Row className='text-center pt-4 mt-4'>
-              <h1>Bienvenido</h1>
-            </Row>
+            <div className='text-center pt-4 mt-4'>
+              <Button href='/albaran' className="mb-5" style={{ background: "rgb(159, 149, 61)", color: "black" }}>Lista de albaranes</Button>
+              <br />
+              <Button href='/albaran/new' className="mb-5" style={{ background: "rgb(159, 149, 61)", color: "black" }}>Crear albarán</Button>
+            </div>
             <div className='text-center pt-4 mt-4'>
               <br />
               <Button className="mb-5" style={{ background: "rgb(159, 149, 61)", color: "black" }} onClick={() => setShowModal(true)}> Ver información acerca del proyecto </Button>

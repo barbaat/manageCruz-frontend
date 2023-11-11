@@ -60,4 +60,9 @@ const updateUser = async (id, user) => {
   return data
 }
 
-export default { newUser, cities, roles, gender, allUsers, getUser, getUserLogeado, deleteUser, updateUser }
+const usersByRol = async (rol) => {
+  const { data } = await axiosWithToken(baseUrl).get(baseUrl + `/getByRol/${rol}`)
+  return data
+}
+
+export default { newUser, cities, roles, gender, allUsers, getUser, getUserLogeado, deleteUser, updateUser, usersByRol }
