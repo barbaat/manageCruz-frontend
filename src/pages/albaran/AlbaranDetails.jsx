@@ -31,10 +31,16 @@ export default function AlbaranDetails() {
                         <Card.Body>
                             <Row>
                                 <Col>
-                                    <p><strong>Fecha:</strong> {new Date(albaran.fecha).toLocaleDateString()}</p>
-                                    <p><strong>Número de Cliente:</strong> {albaran.numeroCliente}</p>
-                                    <p><strong>NIF/CIF:</strong> {albaran.nifCif}</p>
-                                    <p><strong>Vendedor:</strong> {albaran.vendedor}</p>
+                                    <Row>
+                                        <Col sm="6">
+                                            <h4><strong>Fecha:</strong> {new Date(albaran.fecha).toLocaleDateString()}</h4>
+                                            <h4><strong>Número de Cliente:</strong> {albaran.numeroCliente}</h4>
+                                        </Col>
+                                        <Col sm="6">
+                                            <h4><strong>NIF/CIF:</strong> {albaran.nifCif}</h4>
+                                            <h4><strong>Vendedor:</strong> {albaran.vendedor}</h4>
+                                        </Col>
+                                    </Row>
                                 </Col>
                             </Row>
                         </Card.Body>
@@ -79,13 +85,19 @@ export default function AlbaranDetails() {
                             <h2>Total</h2>
                         </Card.Header>
                         <Card.Body>
-                            <Row>
+                            <Row className='text-center'>
                                 <Col>
-                                    <p><strong>Total Bruto:</strong> {albaran.totalBruto}€</p>
-                                    <p><strong>Descuento ({albaran.porcentajeDescuento}%):</strong> {albaran.importeDescuento}€</p>
-                                    <p><strong>Base Imponible:</strong> {albaran.baseImponible}€</p>
-                                    <p><strong>IVA ({albaran.porcentajeIVA}%):</strong> {albaran.importeIVA}€</p>
-                                    <p><strong>Total:</strong> {albaran.total}€</p>
+                                    <Row>
+                                        <Col sm="6">
+                                            <h4><strong>Total Bruto:</strong> {albaran.totalBruto}€</h4>
+                                            <h4><strong>Descuento ({albaran.porcentajeDescuento}%):</strong> {albaran.importeDescuento}€</h4>
+                                        </Col>
+                                        <Col sm="6">
+                                            <h4><strong>Base Imponible:</strong> {albaran.baseImponible}€</h4>
+                                            <h4><strong>IVA ({albaran.porcentajeIVA}%):</strong> {albaran.importeIVA}€</h4>
+                                        </Col>
+                                        <h4 className='pt-4'><strong>Total:</strong> {albaran.total}€</h4>
+                                    </Row>
                                 </Col>
                             </Row>
                         </Card.Body>
@@ -99,7 +111,7 @@ export default function AlbaranDetails() {
                         <Card.Body>
                             <Row>
                                 <Col>
-                                    <p><strong>Forma de Pago:</strong> {albaran.formaPago}</p>
+                                    <h4><strong>Forma de Pago:</strong> {albaran.formaPago}</h4>
                                 </Col>
                             </Row>
                         </Card.Body>

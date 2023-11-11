@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Button, Table, Col, Row, Container } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
 import CustomNavbar from '../../components/NavbarComponent.jsx';
-import { dark } from "@mui/material/styles/createPalette";
+import { createFilter } from 'react-select';
+import "../../css/AlbaranForm.css"
+import albaranService from "../../services/api/albaran.js";
 
 // Datos de prueba para los clientes y los productos
 const clientes = [
@@ -74,9 +76,8 @@ const calcularTotal = (
     return baseImponible + importeIVA + importeRec;
 };
 
-// Componente para el formulario de albarán
-const AlbaranForm = () => {
-    // Estado para el albarán
+export default function AlbaranForm() {
+
     const [albaran, setAlbaran] = useState({
         id: 1,
         fecha: new Date(),
@@ -107,6 +108,17 @@ const AlbaranForm = () => {
         descripcionProducto: "",
         referenciaProducto: "",
     });
+
+    // const [productos, setProductos] = useState([]);
+
+    // useEffect(() => {
+    //     const getProducts = async () => {
+    //         const results = await albaranService.getAllProductos();
+    //         setProductos(results);
+    //         console.log(results);
+    //     };
+    //     getProducts();
+    // }, []);
 
     // Manejador del cambio de fecha
     const handleFechaChange = (date) => {
@@ -274,290 +286,336 @@ const AlbaranForm = () => {
         }),
     };
 
+    const CustomSelectInput = (props) => (
+        <div>
+            <input {...props} />
+        </div>
+    );
+
     return (
         <>
             <CustomNavbar />
-            <Container>
-                <h1 className="text-center">Formulario de albarán</h1>
-                <Form>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Fecha
-                        </Form.Label>
-                        <Col sm="10">
-                            <DatePicker
-                                selected={albaran.fecha}
-                                onChange={handleFechaChange}
-                                dateFormat="dd/MM/yyyy"
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Cliente
-                        </Form.Label>
-                        <Col sm="10">
-                            <Select
-                                options={clientes}
-                                value={clientes.find((cliente) => cliente.value === albaran.numeroCliente)}
-                                onChange={handleClienteChange}
-                                styles={customStyles}
-                                theme={(theme) => ({
-                                    ...theme,
-                                    borderRadius: 0,
-                                    colors: {
-                                        ...theme.colors,
-                                        primary25: 'dark',
-                                        color: 'dark',
-                                    },
-                                })}
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            NIF/CIF
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="text"
-                                value={albaran.nifCif}
-                                readOnly
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Vendedor
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="text"
-                                value={albaran.vendedor}
-                                onChange={handleVendedorChange}
-                            />
-                        </Col>
-                    </Form.Group>
-                    <h2>Añadir detalle</h2>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Producto
-                        </Form.Label>
-                        <Col sm="10">
-                            <Select
-                                options={productos}
-                                value={productos.find(
-                                    (producto) =>
-                                        producto.value === detalle.referenciaProducto
-                                )}
-                                onChange={handleProductoChange}
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Unidades
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={detalle.unidades}
-                                onChange={handleUnidadesChange}
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Precio
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={detalle.precio}
-                                readOnly
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            % Descuento
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={detalle.porcentajeDescuento}
-                                onChange={handlePorcentajeDescuentoChange}
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Importe
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={detalle.importe}
-                                readOnly
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Button variant="primary" onClick={handleAddDetalle}>
-                        Añadir detalle
-                    </Button>
-                    <h2>Detalles del albarán</h2>
-                    <Table striped bordered hover>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Descripción</th>
-                                <th>Unidades</th>
-                                <th>Precio</th>
-                                <th>% Descuento</th>
-                                <th>Importe</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {albaran.detalles.map((detalle) => (
-                                <tr key={detalle.id}>
-                                    <td>{detalle.nombreProducto}</td>
-                                    <td>{detalle.descripcionProducto}</td>
-                                    <td>{detalle.unidades}</td>
-                                    <td>{detalle.precio}</td>
-                                    <td>{detalle.porcentajeDescuento}</td>
-                                    <td>{detalle.importe}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                    <h2>Totales del albarán</h2>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Total bruto
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={albaran.totalBruto}
-                                readOnly
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            % Descuento
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={albaran.porcentajeDescuento}
-                                onChange={handlePorcentajeDescuentoAlbaranChange}
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Importe descuento
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={albaran.importeDescuento}
-                                readOnly
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Base imponible
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={albaran.baseImponible}
-                                readOnly
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            % IVA
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={albaran.porcentajeIVA}
-                                onChange={handlePorcentajeIVAAlbaranChange}
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Importe IVA
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={albaran.importeIVA}
-                                readOnly
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            % Recargo
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={albaran.porcentajeRec}
-                                onChange={handlePorcentajeRecAlbaranChange}
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Importe recargo
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={albaran.importeRec}
-                                readOnly
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Total
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="number"
-                                value={albaran.total}
-                                readOnly
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} className="mb-3">
-                        <Form.Label column sm="2">
-                            Forma de pago
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control
-                                type="text"
-                                value={albaran.formaPago}
-                                onChange={handleFormaPagoChange}
-                            />
-                        </Col>
-                    </Form.Group>
-                    <Button variant="success" onClick={handleSaveAlbaran}>
-                        Guardar albarán
-                    </Button>
-                </Form>
-            </Container>
+            {productos.length > 0 && (
+                <Container>
+                    <h1 className="text-center pb-4"><strong>Formulario de albarán</strong></h1>
+                    <Form>
+                        <Row>
+                            <Col sm="6">
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Fecha
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <DatePicker
+                                            selected={albaran.fecha}
+                                            onChange={handleFechaChange}
+                                            dateFormat="dd/MM/yyyy"
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Cliente
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Select
+                                            options={clientes}
+                                            value={clientes.find((cliente) => cliente.value === albaran.numeroCliente)}
+                                            onChange={handleClienteChange}
+                                            components={{ Input: CustomSelectInput }}
+                                            filterOption={createFilter({ ignoreAccents: false })}
+                                            styles={customStyles}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                            </Col>
+                            <Col sm="6">
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        NIF/CIF
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="text"
+                                            value={albaran.nifCif}
+                                            readOnly
+                                            className="read-only"
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Vendedor
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="text"
+                                            value={albaran.vendedor}
+                                            onChange={handleVendedorChange}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                        <h2 className="pt-2 pb-2"><strong>Añadir detalle</strong></h2>
+                        <Row>
+                            <Col sm="6">
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Producto
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Select
+                                            options={productos}
+                                            value={productos.find(
+                                                (producto) =>
+                                                    producto.id === detalle.referenciaProducto
+                                            )}
+                                            onChange={handleProductoChange}
+                                            components={{ Input: CustomSelectInput }}
+                                            filterOption={createFilter({ ignoreAccents: false })}
+                                            styles={customStyles}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Unidades
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={detalle.unidades}
+                                            onChange={handleUnidadesChange}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Precio
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={detalle.precio}
+                                            readOnly
+                                            className="read-only"
+                                        />
+                                    </Col>
+                                </Form.Group>
+                            </Col>
+                            <Col sm="6">
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Descuento
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={detalle.porcentajeDescuento}
+                                            onChange={handlePorcentajeDescuentoChange}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Importe
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={detalle.importe}
+                                            readOnly
+                                            className="read-only"
+                                        />
+                                    </Col>
+                                </Form.Group>
+
+                            </Col>
+                        </Row>
+                        <Button variant="primary" onClick={handleAddDetalle}>
+                            Añadir producto
+                        </Button>
+                        <h2 className="pt-3 pb-2">
+                            <strong>Detalles del albarán</strong>
+                        </h2>
+                        <div className="table-responsive">
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Descripción</th>
+                                        <th>Unidades</th>
+                                        <th>Precio</th>
+                                        <th>Descuento (%)</th>
+                                        <th>Importe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {albaran.detalles.length === 0 && (
+                                        <tr>
+                                            <td colSpan="6" className="text-center">
+                                                No hay detalles
+                                            </td>
+                                        </tr>
+                                    )}
+                                    {albaran.detalles.map((detalle) => (
+                                        <tr key={detalle.id}>
+                                            <td>{detalle.nombreProducto}</td>
+                                            <td>{detalle.descripcionProducto}</td>
+                                            <td>{detalle.unidades}</td>
+                                            <td>{detalle.precio}</td>
+                                            <td>{detalle.porcentajeDescuento}</td>
+                                            <td>{detalle.importe}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </div>
+                        <h2 className="pt-2 pb-2"><strong>Totales del albarán</strong></h2>
+                        <Row>
+                            <Col sm="6">
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Total bruto
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={albaran.totalBruto}
+                                            readOnly
+                                            className="read-only"
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Descuento
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={albaran.porcentajeDescuento}
+                                            onChange={handlePorcentajeDescuentoAlbaranChange}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Importe descuento
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={albaran.importeDescuento}
+                                            readOnly
+                                            className="read-only"
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Base imponible
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={albaran.baseImponible}
+                                            readOnly
+                                            className="read-only"
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        % IVA
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={albaran.porcentajeIVA}
+                                            onChange={handlePorcentajeIVAAlbaranChange}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                            </Col>
+                            <Col sm="6">
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Importe IVA
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={albaran.importeIVA}
+                                            readOnly
+                                            className="read-only"
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        % Recargo
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={albaran.porcentajeRec}
+                                            onChange={handlePorcentajeRecAlbaranChange}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Importe recargo
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={albaran.importeRec}
+                                            readOnly
+                                            className="read-only"
+                                        />
+                                    </Col>
+                                </Form.Group>
+
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Total
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="number"
+                                            value={albaran.total}
+                                            readOnly
+                                            className="read-only"
+                                        />
+                                    </Col>
+                                </Form.Group>
+
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Forma de pago
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Form.Control
+                                            type="text"
+                                            value={albaran.formaPago}
+                                            onChange={handleFormaPagoChange}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                        <br />
+                        <div className="d-flex justify-content-center align-items-center pb-5">
+                            <Button variant="success" onClick={handleSaveAlbaran}>
+                                Guardar albarán
+                            </Button>
+                        </div>
+                    </Form>
+                </Container>
+            )}
         </>
     );
 };
-
-export default AlbaranForm;

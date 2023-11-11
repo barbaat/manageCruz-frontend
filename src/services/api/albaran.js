@@ -8,13 +8,18 @@ const getAlbaran = async (id) => {
 }
 
 const getAllAlbaran = async () => {
-    const { data } = await axiosWithToken(baseUrl).get(baseUrl + `/get-all`)
+    const { data } = await axiosWithToken(baseUrl).get(baseUrl + `/get-all-albaran`)
     return data
 }
 
 const newAlbaran = async alb => {
     const { data } = await axiosWithToken(baseUrl).post(baseUrl + "/new", alb)
     return data
-  }
+}
 
-export default { getAlbaran, getAllAlbaran, newAlbaran }
+const getAllProductos = async () => {
+    const { data } = await axiosWithToken(baseUrl).get(baseUrl + `/get-all-productos`)
+    return data
+}
+
+export default { getAlbaran, getAllAlbaran, newAlbaran, getAllProductos }
