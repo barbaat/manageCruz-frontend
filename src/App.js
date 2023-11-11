@@ -17,6 +17,7 @@ import '../src/css/Loader.css';
 import AlbaranDetails from './pages/albaran/AlbaranDetails.jsx';
 import AlbaranList from './pages/albaran/AlbaranList.jsx';
 import AlbaranForm from './pages/albaran/AlbaranForm.jsx';
+import AlbaranSign from './pages/albaran/AlbaranSign.jsx';
 
 
 
@@ -65,6 +66,7 @@ const App = () => {
             <Route exact path="/albaran/:id" element={<AlbaranDetails />} />
             <Route exact path="/albaran" element={<AlbaranList />} />
             <Route exact path="/albaran/new" element={<AlbaranForm />} />
+            <Route exact path="/albaran/sign/:id" element={<AlbaranSign />} />
 
             <Route exact path="/notAuthorized" element={<NotAuth />} />
 

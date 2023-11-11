@@ -22,6 +22,12 @@ export default function AlbaranDetails() {
         return +(Math.round(num + "e+2") + "e-2");
     }
 
+    //Construir url para la foto de la firma
+    function buildUrl() {
+        console.log("data:image/png;base64," + albaran.firma);
+        return "data:image/png;base64," + albaran.firma;
+    }
+
     return (
         <>
             <CustomNavbar />
@@ -123,12 +129,25 @@ export default function AlbaranDetails() {
                             </Row>
                         </Card.Body>
                     </Card>
+                    {albaran.firma && (
+                        <>
+                            <h4 className='text-center pt-4'>Firmado ✅</h4>
+                            <div className="d-flex justify-content-center pt-2 pb-5">
+                                <img src={buildUrl()} alt="Firma" />
+                            </div>
+                        </>
+                    )}
                     <div className="d-flex justify-content-center align-items-center pt-5 pb-5">
-                        <Button className='btn btn-primary' href={`/albaran/${albaran.id}/edit`} style={{ marginRight: '10px' }}>Editar</Button>
-                        <Button className='btn btn-secondary' href={`/albaran/sign/${albaran.id}`}>Firmar</Button>
+                        {!albaran.firma && (
+                            <>
+                                <Button className='btn btn-primary' href={`/albaran/${albaran.id}/edit`} style={{ marginRight: '10px' }}>Editar</Button>
+                                <Button className='btn btn-secondary' href={`/albaran/sign/${albaran.id}`}>Firmar</Button>
+                            </>
+                        )}
                     </div>
                     <br />
                     <br />
+
                 </Container>
             )}
             {!albaran && (

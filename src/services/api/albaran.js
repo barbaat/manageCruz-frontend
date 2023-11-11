@@ -32,4 +32,9 @@ const getProducByNombre = async (nombre) => {
     return data
 }
 
-export default { getAlbaran, getAllAlbaran, newAlbaran, getAllProductos, getProducByNombre, newDetalleAlbaran }
+const updateAlb = async (id, albaran) => {
+    const { data } = await axiosWithToken(baseUrl).put(baseUrl + `/update/${id}`, albaran)
+    return data
+}
+
+export default { getAlbaran, getAllAlbaran, newAlbaran, getAllProductos, getProducByNombre, newDetalleAlbaran, updateAlb }

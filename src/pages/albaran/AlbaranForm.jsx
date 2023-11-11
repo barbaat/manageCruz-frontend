@@ -290,7 +290,7 @@ export default function AlbaranForm() {
             detalle.albaran = albaran_guardado;
             await albaranService.newDetalleAlbaran(detalle);
         }
-        alert("Albarán guardado con éxito");
+        window.location.href = `/albaran/${albaran_guardado.id}`;
     };
 
 

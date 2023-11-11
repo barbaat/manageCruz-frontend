@@ -27,6 +27,8 @@
     "react-router-dom": "^6.13.0",
     "react-scripts": "5.0.1",
     "react-select": "^5.8.0",
+    "react-signature-canvas": "^1.0.6",
+    "reactjs-popup": "^2.0.6",
     "sonner": "^0.6.2",
     "styled-components": "^5.3.11",
     "uuid": "^9.0.0",
