@@ -17,27 +17,6 @@ const clientes = [
     { value: "51", label: "B98765432 - Informática y Comunicaciones S.A." },
 ];
 
-// const productos = [
-//     {
-//         value: "42800056",
-//         label: "Termostato digital ELIWELL EW961 (GREEN)",
-//         precio: 23.4,
-//         descripcion: "Termostato para uso industrial",
-//     },
-//     {
-//         value: "42800051",
-//         label: "Termostato DINFER IC200 ATX ( GREEN)",
-//         precio: 11.49,
-//         descripcion: "Termostato DINFER para aplicaciones industriales",
-//     },
-//     {
-//         value: "42800101",
-//         label: "Ventilador 10W",
-//         precio: 7.46,
-//         descripcion: "Ventilador de 10W para sistemas de refrigeración",
-//     },
-// ];
-
 // Función para calcular el importe de un detalle
 const calcularImporte = (unidades, precio, porcentajeDescuento) => {
     return unidades * precio * (1 - porcentajeDescuento / 100);
@@ -111,6 +90,8 @@ export default function AlbaranForm() {
 
     const [productos, setProductos] = useState([]);
     const [clientes, setClientes] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+
 
     useEffect(() => {
         const getProducts = async () => {
@@ -150,14 +131,8 @@ export default function AlbaranForm() {
         });
     };
 
-    // Manejador del cambio de vendedor
-    const handleVendedorChange = (e) => {
-        setAlbaran({ ...albaran, vendedor: e.target.value });
-    };
-
     // Manejador del cambio de producto
     const handleProductoChange = (option) => {
-        console.log(option);
         setDetalle({
             ...detalle,
             id: uuidv4(),
@@ -192,6 +167,14 @@ export default function AlbaranForm() {
 
     // Manejador del botón de añadir detalle
     const handleAddDetalle = () => {
+        if (selectedProduct === null) {
+            alert("Debes seleccionar un producto");
+            return;
+        }
+        if (detalle.unidades === 0) {
+            alert("Las unidades deben ser mayor que 0");
+            return;
+        }
         const nuevosDetalles = [...albaran.detalles, detalle];
         const totalBruto = calcularTotalBruto(nuevosDetalles);
         const importeDescuento = calcularImporteDescuento(
@@ -222,6 +205,7 @@ export default function AlbaranForm() {
             descripcionProducto: "",
             referenciaProducto: "",
         });
+        setSelectedProduct(null);
     };
 
     // Manejador del cambio de porcentaje de descuento del albarán
@@ -388,11 +372,15 @@ export default function AlbaranForm() {
                                     <Col sm="10">
                                         <Select
                                             options={productos}
-                                            value={productos.find((producto) => producto.value === detalle.referenciaProducto)}
-                                            onChange={handleProductoChange}
+                                            value={selectedProduct}
+                                            onChange={(option) => {
+                                                handleProductoChange(option);
+                                                setSelectedProduct(option);
+                                            }}
                                             components={{ Input: CustomSelectInput }}
                                             filterOption={createFilter({ ignoreAccents: false })}
                                             styles={customStyles}
+                                            id="producto"
                                         />
                                     </Col>
                                 </Form.Group>
