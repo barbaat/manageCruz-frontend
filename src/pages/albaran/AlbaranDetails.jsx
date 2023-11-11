@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Card, Row, Col, Table, Spinner } from 'react-bootstrap';
+import { Container, Card, Row, Col, Table, Spinner, Button } from 'react-bootstrap';
 import CustomNavbar from '../../components/NavbarComponent.jsx';
 import albaranService from '../../services/api/albaran.js';
 
@@ -17,6 +17,11 @@ export default function AlbaranDetails() {
         getAlbaran();
     }, []);
 
+    //Método para redondear a dos decimales los números
+    function roundToTwo(num) {
+        return +(Math.round(num + "e+2") + "e-2");
+    }
+
     return (
         <>
             <CustomNavbar />
@@ -26,19 +31,21 @@ export default function AlbaranDetails() {
                     <br />
                     <Card>
                         <Card.Header>
-                            <h2>Información del Cliente</h2>
+                            <h2>Información general</h2>
                         </Card.Header>
                         <Card.Body>
                             <Row>
                                 <Col>
                                     <Row>
                                         <Col sm="6">
-                                            <h4><strong>Fecha:</strong> {new Date(albaran.fecha).toLocaleDateString()}</h4>
+                                            <h4><strong>Fecha de creación:</strong> {new Date(albaran.fecha).toLocaleDateString()}</h4>
                                             <h4><strong>Número de Cliente:</strong> {albaran.numeroCliente}</h4>
                                         </Col>
                                         <Col sm="6">
-                                            <h4><strong>NIF/CIF:</strong> {albaran.nifCif}</h4>
-                                            <h4><strong>Vendedor:</strong> {albaran.vendedor}</h4>
+                                            <h4><strong>DNI del cliente:</strong> {albaran.cliente.dni}</h4>
+                                            <h4><strong>Cliente: </strong>
+                                                <Button className='btn btn-primary' href={`/users/${albaran.cliente.username}`}>{albaran.cliente.name} {albaran.cliente.lastName}</Button>
+                                            </h4>
                                         </Col>
                                     </Row>
                                 </Col>
@@ -96,7 +103,7 @@ export default function AlbaranDetails() {
                                             <h4><strong>Base Imponible:</strong> {albaran.baseImponible}€</h4>
                                             <h4><strong>IVA ({albaran.porcentajeIVA}%):</strong> {albaran.importeIVA}€</h4>
                                         </Col>
-                                        <h4 className='pt-4'><strong>Total:</strong> {albaran.total}€</h4>
+                                        <h4 className='pt-4'><strong>Total: </strong>{roundToTwo(albaran.total)}€</h4>
                                     </Row>
                                 </Col>
                             </Row>
@@ -116,6 +123,10 @@ export default function AlbaranDetails() {
                             </Row>
                         </Card.Body>
                     </Card>
+                    <div className="d-flex justify-content-center align-items-center pt-5 pb-5">
+                        <Button className='btn btn-primary' href={`/albaran/${albaran.id}/edit`} style={{ marginRight: '10px' }}>Editar</Button>
+                        <Button className='btn btn-secondary' href={`/albaran/sign/${albaran.id}`}>Firmar</Button>
+                    </div>
                     <br />
                     <br />
                 </Container>

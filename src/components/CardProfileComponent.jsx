@@ -87,6 +87,7 @@ export default function CardProfile({ object, profile = false }) {
                   Email: <b>{object.email}</b> <a href={mail} style={{ textDecoration: "none" }}></a><br />
                   Teléfono: <b>{object.telephone}</b> <a href={tel} style={{ textDecoration: "none" }}></a><br />
                   Ciudad: <b>{object.cityString}</b> <br />
+                  DNI: <b>{object.dni}</b> <br />
                 </Card.Text>
               </Card.Body>
             </Col>
