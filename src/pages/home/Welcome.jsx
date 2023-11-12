@@ -72,6 +72,7 @@ export default function Welcome() {
                 <h1 className='text-center'>Bienvenido {user.name} {user.lastName}</h1>
                 <br />
                 <h2 className='text-center'>Tu rol es: {user.rolUser}</h2>
+                <br />
                 <h3 className='text-center'>¿Qué quieres hacer?</h3>
               </Col>
             </Row>

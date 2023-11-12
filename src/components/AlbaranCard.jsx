@@ -28,18 +28,9 @@ export default function AlbaranCard({ object }) {
         alignItems: 'center',
     };
 
-    const cardImageStyles = {
-        width: '120px',
-        height: '120px',
-        marginRight: '30px',
-    };
-
     const cardTextStyles = {
         flex: '1',
     };
-
-    const mail = "mailto:" + object.email;
-    const tel = "tel:" + object.telephone;
 
 
     return (
@@ -53,10 +44,12 @@ export default function AlbaranCard({ object }) {
                 >
                     <Card.Body style={cardBodyStyles}>
                         <div className="text-center" style={cardTextStyles}>
-                            <Card.Title>{object.id}</Card.Title>
-                            {/* <Card.Text style={{ fontSize: "1.2rem" }}>
-                                {object.username}<br />
-                            </Card.Text> */}
+                            <Card.Title>Cliente: {object.cliente.name} {object.cliente.lastName}</Card.Title>
+                            <Card.Text style={{ fontSize: "1.2rem" }}>
+                                <p>Fecha: {new Date(object.fecha).toLocaleDateString()}</p>
+                                <p>Total: {object.total.toFixed(2)} €</p>
+                                <p>Forma de Pago: {object.formaPago}</p>
+                            </Card.Text>
                             <Button variant="primary" style={{ background: "purple", color: "white" }}>Ver</Button>
                         </div>
                     </Card.Body>
