@@ -319,6 +319,27 @@ export default function AlbaranForm() {
         </div>
     );
 
+    const handleRemoveDetalle = (detalleId) => {
+        const nuevosDetalles = albaran.detalles.filter((detalle) => detalle.id !== detalleId);
+        const totalBruto = calcularTotalBruto(nuevosDetalles);
+        const importeDescuento = calcularImporteDescuento(totalBruto, albaran.porcentajeDescuento);
+        const baseImponible = calcularBaseImponible(totalBruto, importeDescuento);
+        const importeIVA = calcularImporteIVA(baseImponible, albaran.porcentajeIVA);
+        const importeRec = calcularImporteRec(baseImponible, albaran.porcentajeRec);
+        const total = calcularTotal(baseImponible, importeIVA, importeRec);
+
+        setAlbaran({
+            ...albaran,
+            detalles: nuevosDetalles,
+            totalBruto,
+            importeDescuento,
+            baseImponible,
+            importeIVA,
+            importeRec,
+            total,
+        });
+    };
+
     return (
         <>
             <CustomNavbar />
@@ -465,9 +486,7 @@ export default function AlbaranForm() {
                         <Button variant="primary" onClick={handleAddDetalle}>
                             Añadir producto
                         </Button>
-                        <h2 className="pt-3 pb-2">
-                            <strong>Detalles del albarán</strong>
-                        </h2>
+                        <h2 className="pt-2 pb-2"><strong>Detalles del albarán</strong></h2>
                         <div className="table-responsive">
                             <Table striped bordered hover>
                                 <thead>
@@ -478,12 +497,13 @@ export default function AlbaranForm() {
                                         <th>Precio</th>
                                         <th>Descuento (%)</th>
                                         <th>Importe</th>
+                                        <th>Acciones</th> {/* Nueva columna para el botón de eliminar */}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {albaran.detalles.length === 0 && (
                                         <tr>
-                                            <td colSpan="6" className="text-center">
+                                            <td colSpan="7" className="text-center">
                                                 No hay detalles
                                             </td>
                                         </tr>
@@ -496,6 +516,14 @@ export default function AlbaranForm() {
                                             <td>{detalle.precio}</td>
                                             <td>{detalle.porcentajeDescuento}</td>
                                             <td>{detalle.importe}</td>
+                                            <td>
+                                                <Button
+                                                    variant="danger"
+                                                    onClick={() => handleRemoveDetalle(detalle.id)}
+                                                >
+                                                    Eliminar
+                                                </Button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
