@@ -4,12 +4,15 @@ import { useLocation } from 'react-router-dom';
 import logo from '../assets/images/logo.png';
 import userService from '../services/api/users.js';
 import { useEffect, useState } from 'react';
+import { Button } from 'react-bootstrap';
+import ModalWelcome from './ModalWelcomeComponent';
 
 
 export default function CustomNavbar() {
 
   const [userLog, setUserLog] = useState([]);
   const [urlPerfil, setUrlPerfil] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const location = useLocation();
 
@@ -32,6 +35,7 @@ export default function CustomNavbar() {
 
   }, []);
 
+
   useEffect(() => {
     const token = window.localStorage.getItem('tokenLoggedUser');
     if (!token) {
@@ -40,33 +44,40 @@ export default function CustomNavbar() {
   }, []);
 
   return (
-    <Navbar className="mb-4" expand="lg">
-      <Navbar.Brand href="/">
-        <img src={logo} alt="Logo" style={{ width: '60px', height: '60px' }} />
-      </Navbar.Brand>
-      <Navbar.Toggle aria-controls="navbarNav" className="center-toggle" />
-      <Navbar.Collapse id="navbarNav" >
-        <Nav className='mx-auto'>
-          <Nav.Link href="/" className={location.pathname == '/' ? 'active' : 'not-active'}>Inicio</Nav.Link>
-          {userLog.rolUser == 'ADMIN' && (
+    <>
+      <Navbar className="mb-4" expand="lg">
+        <Navbar.Brand href="/">
+          <img src={logo} alt="Logo" style={{ width: '60px', height: '60px' }} />
+        </Navbar.Brand>
+        <Navbar.Brand>
+          <Button className='btn btn-primary' onClick={() => setShowModal(true)}> Ver información acerca del proyecto </Button>
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbarNav" className="center-toggle" />
+        <Navbar.Collapse id="navbarNav" >
+          <Nav className='mx-auto'>
+            <Nav.Link href="/" className={location.pathname == '/' ? 'active' : 'not-active'}>Inicio</Nav.Link>
+            {userLog.rolUser == 'ADMIN' && (
+              <>
+                <Nav.Link href="/users" className={location.pathname == '/users' ? 'active' : 'not-active'}>Usuarios</Nav.Link>
+                <Nav.Link href="/albaran" className={location.pathname == '/albaran' ? 'active' : 'not-active'}>Albaranes</Nav.Link>
+              </>
+            )}
+          </Nav>
+          <Nav>
             <>
-              <Nav.Link href="/users" className={location.pathname == '/users' ? 'active' : 'not-active'}>Usuarios</Nav.Link>
-              <Nav.Link href="/albaran" className={location.pathname == '/albaran' ? 'active' : 'not-active'}>Albaranes</Nav.Link>
+              <button className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
             </>
-          )}
-        </Nav>
-        <Nav>
-          <>
-            <button className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
-          </>
-        </Nav>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <Nav>
-          <Nav.Link href={urlPerfil} className='not-active'>Ver perfil de <b>{userLog.username}</b></Nav.Link>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          &nbsp;&nbsp;&nbsp;
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+          </Nav>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <Nav>
+            <Nav.Link href={urlPerfil} className='not-active'>Ver perfil de <b>{userLog.username}</b></Nav.Link>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+
+      <ModalWelcome showModal={showModal} setShowModal={setShowModal} />
+    </>
   );
 };

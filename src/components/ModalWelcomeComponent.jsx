@@ -10,7 +10,7 @@ export default function ModalWelcome({ showModal, setShowModal }) {
       </Modal.Header>
       <Modal.Body>
         <div className='text-center'>
-          <img src={logo} alt='logo' width='180px' className='mb-2 pb-2'/>
+          <img src={logo} alt='logo' width='300px' className='mb-2 pb-2'/>
           <p>Proyecto realizado por:</p>
           <p><strong> Francisco Javier Barba Trejo  </strong>
             <a href='https://github.com/barbaat'><GithubSVG /></a>

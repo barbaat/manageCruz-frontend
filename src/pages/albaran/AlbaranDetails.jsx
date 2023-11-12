@@ -17,15 +17,19 @@ export default function AlbaranDetails() {
         getAlbaran();
     }, []);
 
-    //Método para redondear a dos decimales los números
     function roundToTwo(num) {
         return +(Math.round(num + "e+2") + "e-2");
     }
 
-    //Construir url para la foto de la firma
     function buildUrl() {
         console.log("data:image/png;base64," + albaran.firma);
         return "data:image/png;base64," + albaran.firma;
+    }
+
+    async function handlePrepAndConf(e) {
+        albaran.preparadoYConfirmado = true;
+        await albaranService.updateAlb(id, albaran);
+        window.location.reload();
     }
 
     return (
@@ -137,11 +141,21 @@ export default function AlbaranDetails() {
                             </div>
                         </>
                     )}
+                    {!albaran.firma && albaran.preparadoYConfirmado && (
+                        <>
+                            <h4 className='text-center pt-4'>Preparado y confirmado ✅</h4>
+                            <h4 className='text-center pt-4'>Esperando firma...</h4>
+                        </>
+                    )}
                     <div className="d-flex justify-content-center align-items-center pt-5 pb-5">
                         {!albaran.firma && (
                             <>
                                 <Button className='btn btn-primary' href={`/albaran/${albaran.id}/edit`} style={{ marginRight: '10px' }}>Editar</Button>
-                                <Button className='btn btn-secondary' href={`/albaran/sign/${albaran.id}`}>Firmar</Button>
+                                {albaran.preparadoYConfirmado ? (
+                                    <Button className='btn btn-secondary' href={`/albaran/sign/${albaran.id}`}>Firmar</Button>
+                                ) : (
+                                    <Button className='btn btn-success' onClick={(e) => handlePrepAndConf(e)}>Preparar y confirmar</Button>
+                                )}
                             </>
                         )}
                     </div>

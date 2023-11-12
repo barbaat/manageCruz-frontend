@@ -6,8 +6,6 @@ import LoginForm from '../../components/LoginFormComponent';
 import CustomNavbar from '../../components/NavbarComponent';
 import userService from '../../services/api/users';
 import { Button, Row, Col, Container } from 'react-bootstrap';
-import { useListAnimation } from '../../services/utils/animationsList.js';
-import ModalWelcome from '../../components/ModalWelcomeComponent';
 
 
 export default function Welcome() {
@@ -16,9 +14,6 @@ export default function Welcome() {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [, setToken] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-
-  const [parent,] = useListAnimation();
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('tokenLoggedUser');
@@ -26,6 +21,7 @@ export default function Welcome() {
       setToken(loggedUserJSON);
       const getUserByTokenFunc = async () => {
         const userRes = await userService.getUserLogeado();
+        console.log(userRes);
         setUser(userRes);
       };
       getUserByTokenFunc();
@@ -62,20 +58,29 @@ export default function Welcome() {
     }
   };
 
+
+
   return (
     <>
       {user ? (
         <>
           <CustomNavbar />
           <Container fluid>
+            <Row className='justify-content-center'>
+              <Col className='text-center'>
+                <br />
+                <h1 className='text-center'>Bienvenido {user.name} {user.lastName}</h1>
+                <br />
+                <h2 className='text-center'>Tu rol es: {user.rolUser}</h2>
+                <h3 className='text-center'>¿Qué quieres hacer?</h3>
+              </Col>
+            </Row>
+          </Container>
+          <Container fluid>
             <div className='text-center pt-4 mt-4'>
               <Button href='/albaran' className="mb-5" style={{ background: "rgb(159, 149, 61)", color: "black" }}>Lista de albaranes</Button>
               <br />
               <Button href='/albaran/new' className="mb-5" style={{ background: "rgb(159, 149, 61)", color: "black" }}>Crear albarán</Button>
-            </div>
-            <div className='text-center pt-4 mt-4'>
-              <br />
-              <Button className="mb-5" style={{ background: "rgb(159, 149, 61)", color: "black" }} onClick={() => setShowModal(true)}> Ver información acerca del proyecto </Button>
             </div>
           </Container >
         </>
@@ -96,8 +101,6 @@ export default function Welcome() {
         </>
       )
       }
-
-      <ModalWelcome showModal={showModal} setShowModal={setShowModal} />
     </>
   );
 };

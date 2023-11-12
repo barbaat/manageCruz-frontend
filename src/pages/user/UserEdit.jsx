@@ -19,7 +19,6 @@ export default function UserEdit() {
 
     const [ciudades, setCiudades] = useState([]);
     const [generos, setGeneros] = useState([]);
-    const [courses, setCourses] = useState([]);
 
     const [student, setStudent] = useState({});
 
@@ -49,7 +48,6 @@ export default function UserEdit() {
                 }
             } else {
                 setUserEdit(null);
-                setStudent(null);
                 window.location.href = '/error';
             }
         };
@@ -80,23 +78,12 @@ export default function UserEdit() {
         setUserEdit({ ...userEdit, [event.target.name]: event.target.value });
     }
 
-    const handleChangeRol = (event) => {
-        setStudent({ ...student, [event.target.name]: event.target.value });
-    }
-
     const handleSubmit = (event) => {
         event.preventDefault();
         const errores = validaciones.checkValidate(userEdit, allUsers, student.course, true, lastUsername);
         setErrores(errores);
         if (Object.keys(errores).length === 0) {
             userService.updateUser(userEdit.id, userEdit);
-            const newNotification = {
-                title: 'Usuario editado',
-                description: `Tu usuario ha sido editado correctamente`,
-                user: userEdit,
-                read: false,
-                date: new Date(),
-            }
             if (userEdit.username != lastUsername) {
                 window.location.href = '/';
             } else {
@@ -200,31 +187,22 @@ export default function UserEdit() {
                                                         <p className="text-danger">{errores.password}</p>
                                                     )}
                                                 </div>
-                                                {userEdit.rolUser == 'STUDENT' && (
-                                                    <div className="mb-3">
-                                                        <h6 htmlFor="course" className="text-center">Curso</h6>
-                                                        <select
-                                                            type="text"
-                                                            className="form-control"
-                                                            id="course"
-                                                            name="course"
-                                                            value={student.course}
-                                                            onChange={handleChangeRol}
-                                                        >
-                                                            <option value="">Selecciona un curso</option>
-                                                            {courses.map((course) => (
-                                                                <option key={course.id} value={course.value}>
-                                                                    {course.label}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                        {errores.course && (
-                                                            <p className="text-danger">{errores.course}</p>
-                                                        )}
-                                                    </div>
-                                                )}
                                             </Col>
                                             <Col md={{ span: 5, offset: 1 }}>
+                                                <div className="mb-3">
+                                                    <h6 htmlFor="dni" className="text-center">DNI</h6>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="dni"
+                                                        name="dni"
+                                                        value={userEdit.dni}
+                                                        onChange={handleChange}
+                                                    />
+                                                    {errores.telephone && (
+                                                        <p className="text-danger">{errores.telephone}</p>
+                                                    )}
+                                                </div>
                                                 <div className="mb-3">
                                                     <h6 htmlFor="gender" className="text-center">Género</h6>
                                                     <select
