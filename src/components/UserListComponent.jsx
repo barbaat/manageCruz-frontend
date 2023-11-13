@@ -39,8 +39,8 @@ export default function UsersListComponent({ users }) {
             <h1 className='pb-4 mt-5'><b>Lista de usuarios</b></h1>
             <Row>
                 <Col md="3">
-                    <button className="btn btn-link" onClick={handleSort}>
-                        <p className='btn btn-primary'>
+                    <button className="btn btn-primary" onClick={handleSort}>
+                        <p>
                             Ordenar {sortOrder === 'asc' ? <BsFillArrowUpCircleFill /> : <BsFillArrowDownCircleFill />}
                         </p>
                     </button>
@@ -54,7 +54,7 @@ export default function UsersListComponent({ users }) {
                             aria-label="Search"
                             onChange={handleChange(setSearch)}
                             style={{
-                                backgroundColor: '#F9EDFF',
+
                                 border: '1px solid #ccc',
                                 borderRadius: '5px',
                                 padding: '8px'

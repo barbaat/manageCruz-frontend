@@ -79,9 +79,9 @@ export default function Welcome() {
           </Container>
           <Container fluid>
             <div className='text-center pt-4 mt-4'>
-              <Button href='/albaran' className="mb-5" style={{ background: "rgb(159, 149, 61)", color: "black" }}>Lista de albaranes</Button>
+              <Button href='/albaran' className="mb-5 btn btn-primary">Lista de albaranes</Button>
               <br />
-              <Button href='/albaran/new' className="mb-5" style={{ background: "rgb(159, 149, 61)", color: "black" }}>Crear albarán</Button>
+              <Button href='/albaran/new' className="mb-5 btn btn-primary">Crear albarán</Button>
             </div>
           </Container >
         </>
