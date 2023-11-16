@@ -10,61 +10,15 @@ import "../../css/AlbaranForm.css"
 import albaranService from "../../services/api/albaran.js";
 import userService from "../../services/api/users.js";
 
-// Función para calcular el importe de un detalle
-const calcularImporte = (unidades, precio, porcentajeDescuento) => {
-    return unidades * precio * (1 - porcentajeDescuento / 100);
-};
-
-// Función para calcular el total bruto de un albarán
-const calcularTotalBruto = (detalles) => {
-    return detalles.reduce((total, detalle) => total + detalle.importe, 0);
-};
-
-// Función para calcular el importe del descuento de un albarán
-const calcularImporteDescuento = (totalBruto, porcentajeDescuento) => {
-    return totalBruto * (porcentajeDescuento / 100);
-};
-
-// Función para calcular la base imponible de un albarán
-const calcularBaseImponible = (totalBruto, importeDescuento) => {
-    return totalBruto - importeDescuento;
-};
-
-// Función para calcular el importe del IVA de un albarán
-const calcularImporteIVA = (baseImponible, porcentajeIVA) => {
-    return baseImponible * (porcentajeIVA / 100);
-};
-
-// Función para calcular el importe del recargo de un albarán
-const calcularImporteRec = (baseImponible, porcentajeRec) => {
-    return baseImponible * (porcentajeRec / 100);
-};
-
-// Función para calcular el total de un albarán
-const calcularTotal = (
-    baseImponible,
-    importeIVA,
-    importeRec
-) => {
-    return baseImponible + importeIVA + importeRec;
-};
-
 export default function AlbaranForm() {
     const idAleatorio = Math.floor(Math.random() * 1000) + 1;
+
     const [albaran, setAlbaran] = useState({
         id: idAleatorio,
         fecha: new Date(),
         numeroCliente: "",
         dni: "",
         detalles: [],
-        totalBruto: 0,
-        porcentajeDescuento: 0,
-        importeDescuento: 0,
-        baseImponible: 0,
-        porcentajeIVA: 21,
-        importeIVA: 0,
-        porcentajeRec: 0,
-        importeRec: 0,
         total: 0,
         formaPago: "",
     });
@@ -73,8 +27,6 @@ export default function AlbaranForm() {
     const [detalle, setDetalle] = useState({
         id: idAleatorio,
         unidades: 0,
-        precio: 0,
-        porcentajeDescuento: 0,
         importe: 0,
         nombreProducto: "",
         descripcionProducto: "",
@@ -136,26 +88,17 @@ export default function AlbaranForm() {
         });
     };
 
+    // Función para calcular el importe de un detalle
+    const calcularImporte = (precio, unidades) => {
+        const importe = precio * unidades;
+        return importe;
+    };
+
     // Manejador del cambio de unidades
     const handleUnidadesChange = (e) => {
         const unidades = Number(e.target.value);
-        const importe = calcularImporte(
-            unidades,
-            detalle.precio,
-            detalle.porcentajeDescuento
-        );
+        const importe = calcularImporte(detalle.precio, unidades);
         setDetalle({ ...detalle, unidades, importe });
-    };
-
-    // Manejador del cambio de porcentaje de descuento
-    const handlePorcentajeDescuentoChange = (e) => {
-        const porcentajeDescuento = Number(e.target.value);
-        const importe = calcularImporte(
-            detalle.unidades,
-            detalle.precio,
-            porcentajeDescuento
-        );
-        setDetalle({ ...detalle, porcentajeDescuento, importe });
     };
 
     // Manejador del botón de añadir detalle
@@ -169,23 +112,10 @@ export default function AlbaranForm() {
             return;
         }
         const nuevosDetalles = [...albaran.detalles, detalle];
-        const totalBruto = calcularTotalBruto(nuevosDetalles);
-        const importeDescuento = calcularImporteDescuento(
-            totalBruto,
-            albaran.porcentajeDescuento
-        );
-        const baseImponible = calcularBaseImponible(totalBruto, importeDescuento);
-        const importeIVA = calcularImporteIVA(baseImponible, albaran.porcentajeIVA);
-        const importeRec = calcularImporteRec(baseImponible, albaran.porcentajeRec);
-        const total = calcularTotal(baseImponible, importeIVA, importeRec);
+        const total = nuevosDetalles.reduce((acc, detalle) => acc + detalle.importe, 0);
         setAlbaran({
             ...albaran,
             detalles: nuevosDetalles,
-            totalBruto,
-            importeDescuento,
-            baseImponible,
-            importeIVA,
-            importeRec,
             total,
         });
         setDetalle({
@@ -194,74 +124,13 @@ export default function AlbaranForm() {
             porcentajeDescuento: 0,
             importe: 0,
             nombreProducto: "",
-            descripcionProducto: "",
-            referenciaProducto: "",
         });
         setSelectedProduct(null);
     };
 
-    // Manejador del cambio de porcentaje de descuento del albarán
-    const handlePorcentajeDescuentoAlbaranChange = (e) => {
-        const porcentajeDescuento = Number(e.target.value);
-        const importeDescuento = calcularImporteDescuento(
-            albaran.totalBruto,
-            porcentajeDescuento
-        );
-        const baseImponible = calcularBaseImponible(
-            albaran.totalBruto,
-            importeDescuento
-        );
-        const importeIVA = calcularImporteIVA(baseImponible, albaran.porcentajeIVA);
-        const importeRec = calcularImporteRec(baseImponible, albaran.porcentajeRec);
-        const total = calcularTotal(baseImponible, importeIVA, importeRec);
-        setAlbaran({
-            ...albaran,
-            porcentajeDescuento,
-            importeDescuento,
-            baseImponible,
-            importeIVA,
-            importeRec,
-            total,
-        });
-    };
-
-    // Manejador del cambio de porcentaje de IVA del albarán
-    const handlePorcentajeIVAAlbaranChange = (e) => {
-        const porcentajeIVA = Number(e.target.value);
-        const importeIVA = calcularImporteIVA(albaran.baseImponible, porcentajeIVA);
-        const total = calcularTotal(
-            albaran.baseImponible,
-            importeIVA,
-            albaran.importeRec
-        );
-        setAlbaran({
-            ...albaran,
-            porcentajeIVA,
-            importeIVA,
-            total,
-        });
-    };
-
-    // Manejador del cambio de porcentaje de recargo del albarán
-    const handlePorcentajeRecAlbaranChange = (e) => {
-        const porcentajeRec = Number(e.target.value);
-        const importeRec = calcularImporteRec(albaran.baseImponible, porcentajeRec);
-        const total = calcularTotal(
-            albaran.baseImponible,
-            albaran.importeIVA,
-            importeRec
-        );
-        setAlbaran({
-            ...albaran,
-            porcentajeRec,
-            importeRec,
-            total,
-        });
-    };
-
     // Manejador del cambio de forma de pago del albarán
-    const handleFormaPagoChange = (e) => {
-        setAlbaran({ ...albaran, formaPago: e.target.value });
+    const handleFormaPagoChange = (selectedOption) => {
+        setAlbaran({ ...albaran, formaPago: selectedOption.value });
     };
 
     // Función para buscar un producto por su nombre
@@ -278,6 +147,10 @@ export default function AlbaranForm() {
         }
         if (albaran.detalles.length === 0) {
             alert("Debes añadir al menos un detalle");
+            return;
+        }
+        if (albaran.formaPago === "") {
+            alert("Debes seleccionar una forma de pago");
             return;
         }
         const detallesToSave = albaran.detalles.map(detalle => ({
@@ -321,21 +194,11 @@ export default function AlbaranForm() {
 
     const handleRemoveDetalle = (detalleId) => {
         const nuevosDetalles = albaran.detalles.filter((detalle) => detalle.id !== detalleId);
-        const totalBruto = calcularTotalBruto(nuevosDetalles);
-        const importeDescuento = calcularImporteDescuento(totalBruto, albaran.porcentajeDescuento);
-        const baseImponible = calcularBaseImponible(totalBruto, importeDescuento);
-        const importeIVA = calcularImporteIVA(baseImponible, albaran.porcentajeIVA);
-        const importeRec = calcularImporteRec(baseImponible, albaran.porcentajeRec);
-        const total = calcularTotal(baseImponible, importeIVA, importeRec);
+        const total = nuevosDetalles.reduce((acc, detalle) => acc + detalle.importe, 0);
 
         setAlbaran({
             ...albaran,
             detalles: nuevosDetalles,
-            totalBruto,
-            importeDescuento,
-            baseImponible,
-            importeIVA,
-            importeRec,
             total,
         });
     };
@@ -373,6 +236,7 @@ export default function AlbaranForm() {
                                             components={{ Input: CustomSelectInput }}
                                             filterOption={createFilter({ ignoreAccents: false })}
                                             styles={customStyles}
+                                            placeholder="Selecciona un cliente"
                                         />
                                     </Col>
                                 </Form.Group>
@@ -425,6 +289,7 @@ export default function AlbaranForm() {
                                             filterOption={createFilter({ ignoreAccents: false })}
                                             styles={customStyles}
                                             id="producto"
+                                            placeholder="Selecciona unn producto"
                                         />
                                     </Col>
                                 </Form.Group>
@@ -457,18 +322,6 @@ export default function AlbaranForm() {
                             <Col sm="6">
                                 <Form.Group as={Row} className="mb-3">
                                     <Form.Label column sm="2">
-                                        Descuento
-                                    </Form.Label>
-                                    <Col sm="10">
-                                        <Form.Control
-                                            type="number"
-                                            value={detalle.porcentajeDescuento || ''}
-                                            onChange={handlePorcentajeDescuentoChange}
-                                        />
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="2">
                                         Importe
                                     </Form.Label>
                                     <Col sm="10">
@@ -492,10 +345,8 @@ export default function AlbaranForm() {
                                 <thead>
                                     <tr>
                                         <th>Producto</th>
-                                        <th>Descripción</th>
                                         <th>Unidades</th>
                                         <th>Precio</th>
-                                        <th>Descuento (%)</th>
                                         <th>Importe</th>
                                         <th>Acciones</th> {/* Nueva columna para el botón de eliminar */}
                                     </tr>
@@ -511,10 +362,8 @@ export default function AlbaranForm() {
                                     {albaran.detalles.map((detalle) => (
                                         <tr key={detalle.id}>
                                             <td>{detalle.nombreProducto}</td>
-                                            <td>{detalle.descripcionProducto}</td>
                                             <td>{detalle.unidades}</td>
                                             <td>{detalle.precio}</td>
-                                            <td>{detalle.porcentajeDescuento}</td>
                                             <td>{detalle.importe}</td>
                                             <td>
                                                 <Button
@@ -534,110 +383,6 @@ export default function AlbaranForm() {
                             <Col sm="6">
                                 <Form.Group as={Row} className="mb-3">
                                     <Form.Label column sm="2">
-                                        Total bruto
-                                    </Form.Label>
-                                    <Col sm="10">
-                                        <Form.Control
-                                            type="number"
-                                            value={albaran.totalBruto}
-                                            readOnly
-                                            className="read-only"
-                                        />
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="2">
-                                        Descuento
-                                    </Form.Label>
-                                    <Col sm="10">
-                                        <Form.Control
-                                            type="number"
-                                            value={albaran.porcentajeDescuento}
-                                            onChange={handlePorcentajeDescuentoAlbaranChange}
-                                        />
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="2">
-                                        Importe descuento
-                                    </Form.Label>
-                                    <Col sm="10">
-                                        <Form.Control
-                                            type="number"
-                                            value={albaran.importeDescuento}
-                                            readOnly
-                                            className="read-only"
-                                        />
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="2">
-                                        Base imponible
-                                    </Form.Label>
-                                    <Col sm="10">
-                                        <Form.Control
-                                            type="number"
-                                            value={albaran.baseImponible}
-                                            readOnly
-                                            className="read-only"
-                                        />
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="2">
-                                        % IVA
-                                    </Form.Label>
-                                    <Col sm="10">
-                                        <Form.Control
-                                            type="number"
-                                            value={albaran.porcentajeIVA}
-                                            onChange={handlePorcentajeIVAAlbaranChange}
-                                        />
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-                            <Col sm="6">
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="2">
-                                        Importe IVA
-                                    </Form.Label>
-                                    <Col sm="10">
-                                        <Form.Control
-                                            type="number"
-                                            value={albaran.importeIVA}
-                                            readOnly
-                                            className="read-only"
-                                        />
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="2">
-                                        % Recargo
-                                    </Form.Label>
-                                    <Col sm="10">
-                                        <Form.Control
-                                            type="number"
-                                            value={albaran.porcentajeRec}
-                                            onChange={handlePorcentajeRecAlbaranChange}
-                                        />
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="2">
-                                        Importe recargo
-                                    </Form.Label>
-                                    <Col sm="10">
-                                        <Form.Control
-                                            type="number"
-                                            value={albaran.importeRec}
-                                            readOnly
-                                            className="read-only"
-                                        />
-                                    </Col>
-                                </Form.Group>
-
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="2">
                                         Total
                                     </Form.Label>
                                     <Col sm="10">
@@ -655,10 +400,15 @@ export default function AlbaranForm() {
                                         Forma de pago
                                     </Form.Label>
                                     <Col sm="10">
-                                        <Form.Control
-                                            type="text"
-                                            value={albaran.formaPago}
+                                        <Select
+                                            options={[
+                                                { value: 'Contado', label: 'Contado' },
+                                                { value: 'Crédito', label: 'Crédito' },
+                                            ]}
+                                            value={{ value: albaran.formaPago, label: albaran.formaPago }}
                                             onChange={handleFormaPagoChange}
+                                            styles={customStyles}
+                                            placeholder="Selecciona una forma de pago"
                                         />
                                     </Col>
                                 </Form.Group>

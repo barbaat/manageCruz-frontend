@@ -7,12 +7,24 @@ import albaranService from '../../services/api/albaran.js';
 export default function AlbaranDetails() {
     const { id } = useParams();
     const [albaran, setAlbaran] = useState(null);
+    const [botelleros, setBotelleros] = useState(null);
+    const [sinAlcohol, setSinAlcohol] = useState(0);
+    const [sinGluten, setSinGluten] = useState(0);
+    const [milPesetas, setMilPesetas] = useState(0);
+    const [aguas, setAguas] = useState(0);
 
     useEffect(() => {
         const getAlbaran = async () => {
             const albaran = await albaranService.getAlbaran(id);
             console.log(albaran);
             setAlbaran(albaran);
+            const detalles = albaran.detalles;
+            const botelleros = detalles.filter(detalle => detalle.nombreProducto === "Botelleros");
+            setBotelleros(botelleros);
+            setSinGluten(botelleros.length * 10);
+            setSinAlcohol(botelleros.length * 10);
+            setMilPesetas(botelleros.length * 10);
+            setAguas(botelleros.length * 10);
         }
         getAlbaran();
     }, []);
@@ -32,16 +44,17 @@ export default function AlbaranDetails() {
         window.location.reload();
     }
 
+
     return (
         <>
             <CustomNavbar />
             {albaran && (
                 <Container>
-                    <h1 className="text-center">Albarán #{albaran.id}</h1>
+                    <h1 style={{ color: "#f8c76495" }} className="text-center"><strong>Albarán #{albaran.id}</strong></h1>
                     <br />
                     <Card>
                         <Card.Header>
-                            <h2>Información general</h2>
+                            <h2 style={{ color: "#f8c76495" }}>Información general</h2>
                         </Card.Header>
                         <Card.Body>
                             <Row>
@@ -49,7 +62,7 @@ export default function AlbaranDetails() {
                                     <Row>
                                         <Col sm="6">
                                             <h4><strong>Fecha de creación:</strong> {new Date(albaran.fecha).toLocaleDateString()}</h4>
-                                            <h4><strong>Número de Cliente:</strong> {albaran.numeroCliente}</h4>
+                                            <h4><strong>Número de Cliente:</strong> {albaran.vendedor}</h4>
                                         </Col>
                                         <Col sm="6">
                                             <h4><strong>DNI del cliente:</strong> {albaran.cliente.dni}</h4>
@@ -66,55 +79,65 @@ export default function AlbaranDetails() {
                     <br />
                     <Card>
                         <Card.Header>
-                            <h2>Detalles del Albarán</h2>
+                            <h2 style={{ color: "#f8c76495" }}>Detalles del Albarán</h2>
                         </Card.Header>
                         <Card.Body>
-                            <div className="table-responsive">
-                                <Table striped bordered hover variant="dark">
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre del Producto</th>
-                                            <th>Descripción</th>
-                                            <th>Unidades</th>
-                                            <th>Precio</th>
-                                            <th>Importe</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {albaran.detalles.map((detalle) => (
-                                            <tr key={detalle.id}>
-                                                <td>{detalle.nombreProducto}</td>
-                                                <td>{detalle.descripcionProducto}</td>
-                                                <td>{detalle.unidades}</td>
-                                                <td>{detalle.precio}€</td>
-                                                <td>{detalle.importe}€</td>
+                            <Row>
+                                <Col className='text-center'>
+                                    <h4 style={{ color: "#f8c76495" }}>Productos a entregar</h4>
+                                    <Table striped bordered hover variant="dark">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre del Producto</th>
+                                                <th>Unidades</th>
+                                                <th>Precio</th>
+                                                <th>Importe</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                    <br />
-                    <br />
-                    <Card>
-                        <Card.Header>
-                            <h2>Total</h2>
-                        </Card.Header>
-                        <Card.Body>
-                            <Row className='text-center'>
-                                <Col>
-                                    <Row>
-                                        <Col sm="6">
-                                            <h4><strong>Total Bruto:</strong> {albaran.totalBruto}€</h4>
-                                            <h4><strong>Descuento ({albaran.porcentajeDescuento}%):</strong> {albaran.importeDescuento}€</h4>
-                                        </Col>
-                                        <Col sm="6">
-                                            <h4><strong>Base Imponible:</strong> {albaran.baseImponible}€</h4>
-                                            <h4><strong>IVA ({albaran.porcentajeIVA}%):</strong> {albaran.importeIVA}€</h4>
-                                        </Col>
-                                        <h4 className='pt-4'><strong>Total: </strong>{roundToTwo(albaran.total)}€</h4>
-                                    </Row>
+                                        </thead>
+                                        <tbody>
+                                            {albaran.detalles.map((detalle) => (
+                                                <tr key={detalle.id}>
+                                                    <td>{detalle.nombreProducto}</td>
+                                                    <td>{detalle.unidades}</td>
+                                                    <td>{detalle.precio}€</td>
+                                                    <td>{detalle.importe}€</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                </Col>
+                                <Col className='text-center'>
+                                    <h4 style={{ color: "#f8c76495" }}>Mercancía gratuita</h4>
+                                    {botelleros.length > 0 ? (
+                                    <Table striped bordered hover variant="dark">
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Cantidad</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Sin Alcohol</td>
+                                                <td>{sinAlcohol}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Sin Gluten</td>
+                                                <td>{sinGluten}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Mil Pesetas</td>
+                                                <td>{milPesetas}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Aguas 0,5L</td>
+                                                <td>{aguas}</td>
+                                            </tr>
+                                        </tbody>
+                                    </Table>
+                                    ) : (
+                                        <h5 className='pt-4'>No incluido</h5>
+                                    )}
                                 </Col>
                             </Row>
                         </Card.Body>
@@ -123,7 +146,19 @@ export default function AlbaranDetails() {
                     <br />
                     <Card>
                         <Card.Header>
-                            <h2>Información de Pago</h2>
+                            <h2 style={{ color: "#f8c76495" }}>Total</h2>
+                        </Card.Header>
+                        <Card.Body>
+                            <Row className='text-center'>
+                                <h4><strong>Importe a pagar por fianza: </strong>{roundToTwo(albaran.total)}€</h4>
+                            </Row>
+                        </Card.Body>
+                    </Card>
+                    <br />
+                    <br />
+                    <Card>
+                        <Card.Header>
+                            <h2 style={{ color: "#f8c76495" }}>Información de Pago</h2>
                         </Card.Header>
                         <Card.Body>
                             <Row>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Form } from 'react-bootstrap';
+import { Row, Col, Form, Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { useListAnimation } from '../../services/utils/animationsList.js';
 import albaranService from '../../services/api/albaran.js';
@@ -68,6 +68,9 @@ export default function AlbaranList() {
                     />
                 </Form.Group>
 
+                <Button className='btn btn-primary' style={{background:"#f8c76495"}} href={`/albaran/new`}>Crear albarán</Button>
+                <br />
+                <br />
                 {albaranesShow.length === 0 && <p>No hay albaranes</p>}
                 <Row ref={parent}>
                     {albaranesShow.map((albaran) => (
