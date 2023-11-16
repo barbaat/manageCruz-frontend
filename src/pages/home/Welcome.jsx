@@ -20,9 +20,12 @@ export default function Welcome() {
     if (loggedUserJSON) {
       setToken(loggedUserJSON);
       const getUserByTokenFunc = async () => {
-        const userRes = await userService.getUserLogeado();
-        console.log(userRes);
-        setUser(userRes);
+        try {
+          const userRes = await userService.getUserLogeado();
+          setUser(userRes);
+        } catch (error) {
+          console.error('Error fetching user by token:', error);
+        }
       };
       getUserByTokenFunc();
     } else {
@@ -34,31 +37,25 @@ export default function Welcome() {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const token = await loginService.token({ username, password, });
-      const userLog = await loginService.login({ username, password, });
-      console.log(userLog);
-      console.log(token);
+      const token = await loginService.token({ username, password });
+      const userLog = await loginService.login({ username, password });
+
       if (userLog) {
         window.localStorage.setItem('tokenLoggedUser', token);
         setToken(token);
         setUser(userLog);
         window.location.reload();
-      } else if (userLog == undefined) {
-        setErrorMessage('Credenciales inválidas');
-        console.log(errorMessage.length);
-        setTimeout(() => {
-          setErrorMessage('');
-        }, 4000);
+      } else {
+        throw new Error('Credenciales inválidas');
       }
-    } catch (e) {
+    } catch (error) {
+      console.error('Error during login:', error);
       setErrorMessage('Credenciales inválidas');
       setTimeout(() => {
         setErrorMessage('');
       }, 4000);
     }
   };
-
-
 
   return (
     <>
@@ -86,20 +83,18 @@ export default function Welcome() {
           </Container >
         </>
       ) : (
-        <>
-          <div className="container">
-            <div className="text-center justify-content-center">
-              <LoginForm
-                username={username}
-                password={password}
-                handleUsernameChange={({ target }) => setUsername(target.value)}
-                handlePasswordChange={({ target }) => setPassword(target.value)}
-                handleSubmit={handleLogin}
-              />
-            </div>
-            {errorMessage.length >= 1 && <p className='alert alert-warning mt-5'>{errorMessage}, prueba otra vez</p>}
+        <div className="container">
+          <div className="text-center justify-content-center">
+            <LoginForm
+              username={username}
+              password={password}
+              handleUsernameChange={({ target }) => setUsername(target.value)}
+              handlePasswordChange={({ target }) => setPassword(target.value)}
+              handleSubmit={handleLogin}
+              errorMessage={errorMessage}
+            />
           </div>
-        </>
+        </div>
       )
       }
     </>
