@@ -105,36 +105,42 @@ export default function AlbaranDetails() {
                                             ))}
                                         </tbody>
                                     </Table>
+                                    {albaran.tipoInstalacion && (
+                                        <>
+                                            <br />
+                                            <h5><strong>Tipo de instalación: {albaran.tipoInstalacion}</strong></h5>
+                                        </>
+                                    )}
                                 </Col>
                                 <Col className='text-center'>
                                     <h4 style={{ color: "#f8c76495" }}>Mercancía gratuita</h4>
                                     {botelleros.length > 0 ? (
-                                    <Table striped bordered hover variant="dark">
-                                        <thead>
-                                            <tr>
-                                                <th>Producto</th>
-                                                <th>Cantidad</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Sin Alcohol</td>
-                                                <td>{sinAlcohol}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Sin Gluten</td>
-                                                <td>{sinGluten}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Mil Pesetas</td>
-                                                <td>{milPesetas}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Aguas 0,5L</td>
-                                                <td>{aguas}</td>
-                                            </tr>
-                                        </tbody>
-                                    </Table>
+                                        <Table striped bordered hover variant="dark">
+                                            <thead>
+                                                <tr>
+                                                    <th>Producto</th>
+                                                    <th>Cantidad</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Sin Alcohol</td>
+                                                    <td>{sinAlcohol}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sin Gluten</td>
+                                                    <td>{sinGluten}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Mil Pesetas</td>
+                                                    <td>{milPesetas}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Aguas 0,5L</td>
+                                                    <td>{aguas}</td>
+                                                </tr>
+                                            </tbody>
+                                        </Table>
                                     ) : (
                                         <h5 className='pt-4'>No incluido</h5>
                                     )}
@@ -168,6 +174,9 @@ export default function AlbaranDetails() {
                             </Row>
                         </Card.Body>
                     </Card>
+                    <div className="d-flex justify-content-center align-items-center pt-5 pb-5">
+                        <Button className='btn btn-warning' href={`/albaran/${albaran.id}/edit`} style={{ marginRight: '10px' }}>Registrar incidencia</Button>
+                    </div>
                     {albaran.firma && (
                         <>
                             <h4 className='text-center pt-4'>Firmado ✅</h4>

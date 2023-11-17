@@ -3,7 +3,6 @@ import { Form, Button, Table, Col, Row, Container } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
-import { v4 as uuidv4 } from "uuid";
 import CustomNavbar from '../../components/NavbarComponent.jsx';
 import { createFilter } from 'react-select';
 import "../../css/AlbaranForm.css"
@@ -12,6 +11,12 @@ import userService from "../../services/api/users.js";
 
 export default function AlbaranForm() {
     const idAleatorio = Math.floor(Math.random() * 1000) + 1;
+    const [showTipoInstalacion, setShowTipoInstalacion] = useState(false);
+    const [productos, setProductos] = useState([]);
+    const [clientes, setClientes] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [instalaciones, setInstalaciones] = useState([]);
+
 
     const [albaran, setAlbaran] = useState({
         id: idAleatorio,
@@ -21,6 +26,7 @@ export default function AlbaranForm() {
         detalles: [],
         total: 0,
         formaPago: "",
+        tipoInstalacion: "",
     });
 
     // Estado para el detalle actual
@@ -32,10 +38,6 @@ export default function AlbaranForm() {
         descripcionProducto: "",
         referenciaProducto: "",
     });
-
-    const [productos, setProductos] = useState([]);
-    const [clientes, setClientes] = useState([]);
-    const [selectedProduct, setSelectedProduct] = useState(null);
 
 
     useEffect(() => {
@@ -60,6 +62,16 @@ export default function AlbaranForm() {
         }
         getClientes();
     }, []);
+
+    useEffect(() => {
+        const instalaciones = albaran.detalles.filter(detalle => detalle.nombreProducto.includes("Instalaciones"));
+        setInstalaciones(instalaciones);
+        if (instalaciones.length > 0) {
+            setShowTipoInstalacion(true);
+        } else {
+            setShowTipoInstalacion(false);
+        }
+    }, [albaran.detalles]);
 
 
     // Manejador del cambio de fecha
@@ -133,13 +145,18 @@ export default function AlbaranForm() {
         setAlbaran({ ...albaran, formaPago: selectedOption.value });
     };
 
+    // Manejador del cambio de forma de pago del albarán
+    const handleTipoInstalacionChange = (selectedOption) => {
+        setAlbaran({ ...albaran, tipoInstalacion: selectedOption.value });
+    };
+
+
     // Función para buscar un producto por su nombre
     const findProductByName = (nombre) => {
         const res = productos.find(producto => producto.value.nombre === nombre).value;
         return res;
     }
 
-    // Manejador del botón de guardar albarán
     const handleSaveAlbaran = async () => {
         if (albaran.numeroCliente == "") {
             alert("Debes seleccionar un cliente");
@@ -151,6 +168,10 @@ export default function AlbaranForm() {
         }
         if (albaran.formaPago === "") {
             alert("Debes seleccionar una forma de pago");
+            return;
+        }
+        if (instalaciones.length > 0 && albaran.tipoInstalacion === "") {
+            alert("Debes seleccionar un tipo de instalación");
             return;
         }
         const detallesToSave = albaran.detalles.map(detalle => ({
@@ -244,7 +265,7 @@ export default function AlbaranForm() {
                             <Col sm="6">
                                 <Form.Group as={Row} className="mb-3">
                                     <Form.Label column sm="2">
-                                        dni
+                                        DNI
                                     </Form.Label>
                                     <Col sm="10">
                                         <Form.Control
@@ -348,7 +369,7 @@ export default function AlbaranForm() {
                                         <th>Unidades</th>
                                         <th>Precio</th>
                                         <th>Importe</th>
-                                        <th>Acciones</th> {/* Nueva columna para el botón de eliminar */}
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -377,6 +398,38 @@ export default function AlbaranForm() {
                                     ))}
                                 </tbody>
                             </Table>
+                        </div>
+                        <br />
+                        <div>
+                            {showTipoInstalacion && (
+                                <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">
+                                        Tipo de instalación
+                                    </Form.Label>
+                                    <Col sm="10">
+                                        <Select
+                                            options={[
+                                                { value: 'MODELO', label: 'MODELO' },
+                                                { value: 'GLACIAL', label: 'GLACIAL' },
+                                                { value: 'V-200', label: 'V-200' },
+                                                { value: 'V-100', label: 'V-100' },
+                                                { value: 'COBRA', label: 'COBRA' },
+                                                { value: 'V-200 DOBLE', label: 'V-200 DOBLE' },
+                                                { value: 'COBRA DOBLE', label: 'COBRA DOBLE' },
+                                                { value: 'V-200 Acero', label: 'V-200 Acero' },
+                                                { value: 'V-175 GLACIAL', label: 'V-175 GLACIAL' },
+                                                { value: 'GLACIAL COBRA', label: 'GLACIAL COBRA' },
+                                                { value: 'V-100 CARTUJA', label: 'V-100 CARTUJA' },
+                                                { value: 'COBRA V-100', label: 'COBRA V-100' },
+                                            ]}
+                                            value={{ value: albaran.tipoInstalacion, label: albaran.tipoInstalacion }}
+                                            onChange={handleTipoInstalacionChange}
+                                            styles={customStyles}
+                                            placeholder="Selecciona un modelo"
+                                        />
+                                    </Col>
+                                </Form.Group>
+                            )}
                         </div>
                         <h2 className="pt-2 pb-2"><strong>Totales del albarán</strong></h2>
                         <Row>

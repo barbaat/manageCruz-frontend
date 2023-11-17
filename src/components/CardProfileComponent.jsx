@@ -46,6 +46,7 @@ export default function CardProfile({ object, profile = false }) {
     'ADMIN': 'Administrador',
     'OFICINA': 'Oficina 🏢',
     'CLIENTE': 'Cliente 🤝',
+    'COMERCIAL': 'Comercial 📈',
   };
 
   useEffect(() => {

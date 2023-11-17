@@ -1,7 +1,7 @@
 import "../../css/Loader.css"
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Row } from 'react-bootstrap';
+import { Card, Col, Row } from 'react-bootstrap';
 import userService from '../../services/api/users.js';
 import CustomNavbar from '../../components/NavbarComponent';
 import Error from '../others/Error';
@@ -11,6 +11,7 @@ import { BsFillTrash3Fill, BsPencilSquare } from "react-icons/bs";
 export default function UserDetails() {
   const [user, setUser] = useState([]);
   const [userLog, setUserLog] = useState([]);
+  const [casetas, setCasetas] = useState([]);
   const { username } = useParams();
 
   useEffect(() => {
@@ -21,6 +22,8 @@ export default function UserDetails() {
         try {
           const user = await userService.getUser(username);
           setUser(user);
+          setCasetas(user.casetas);
+          console.log(user);
         } catch (error) {
           console.log('Error al obtener el usuario:', error);
         }
@@ -65,11 +68,11 @@ export default function UserDetails() {
             <Row className='mx-auto text-center'>
               <h1 className="mb-3 pb-3 mx-auto pt-3"><b>Detalles del usuario</b></h1>
             </Row>
-            <br />
-            <br />
             <Row>
+              <Col className="mx-auto text-center">
                 <br />
                 <CardProfile object={user} profile />
+                <br />
                 {(userLog.rolUser == 'ADMIN' || userLog.username == user.username) && (
                   <div className="pt-2 mt-2 text-center mb-4 pb-4" style={{ fontSize: "2rem" }}>
                     <Link to={`/users/edit/${user.username}`} className="btn" style={{ background: "rgb(159, 149, 61)", color: "white" }}>
@@ -84,6 +87,28 @@ export default function UserDetails() {
                     )}
                   </div>
                 )}
+              </Col>
+              <Col className="mx-auto text-center">
+                {casetas.length > 0 && (
+                  <>
+                  <br />
+                    <h2 className="text-center"><strong>Casetas</strong></h2>
+                    <div>
+                      <br />
+                      {casetas.map((caseta) => (
+                        <>
+                          <Card key={caseta.id}>
+                            <Card.Body>
+                              <Card.Title>{caseta.calle} - {caseta.numero}</Card.Title>
+                            </Card.Body>
+                          </Card>
+                          <br />
+                        </>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </Col>
             </Row>
           </div>
         </>
