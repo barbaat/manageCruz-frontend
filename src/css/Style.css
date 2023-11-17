@@ -1,7 +1,7 @@
 #root {
-  background-image: url('../assets/images/fondo.jpg');
+  background-image: url('../assets/new-fondo.jpg');
   background-repeat: no-repeat;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.7);
   background-blend-mode: overlay;
   background-size: cover;
   color: rgb(255, 255, 255);
@@ -24,4 +24,15 @@
 .fade-out {
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
+}
+
+.btn {
+  background-color: #865f1095;
+  color: rgb(255, 255, 255);
+  border: none;
+}
+
+.btn:hover{
+  background-color: #865f10;
+  color: rgb(255, 255, 255);
 }

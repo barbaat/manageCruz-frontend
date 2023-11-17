@@ -40,9 +40,9 @@ export default function UsersListComponent({ users }) {
             <Row>
                 <Col md="3">
                     <button className="btn btn-primary" onClick={handleSort}>
-                        <p>
+                        <h5>
                             Ordenar {sortOrder === 'asc' ? <BsFillArrowUpCircleFill /> : <BsFillArrowDownCircleFill />}
-                        </p>
+                        </h5>
                     </button>
                 </Col>
                 <Col md="7">
@@ -54,7 +54,6 @@ export default function UsersListComponent({ users }) {
                             aria-label="Search"
                             onChange={handleChange(setSearch)}
                             style={{
-
                                 border: '1px solid #ccc',
                                 borderRadius: '5px',
                                 padding: '8px'

@@ -83,9 +83,9 @@ export default function AlbaranDetails() {
                         </Card.Header>
                         <Card.Body>
                             <Row>
-                                <Col className='text-center'>
+                                <Col sm="8" className='text-center'>
                                     <h4 style={{ color: "#f8c76495" }}>Productos a entregar</h4>
-                                    <Table striped bordered hover variant="dark">
+                                    <Table striped bordered hover >
                                         <thead>
                                             <tr>
                                                 <th>Nombre del Producto</th>
@@ -112,10 +112,10 @@ export default function AlbaranDetails() {
                                         </>
                                     )}
                                 </Col>
-                                <Col className='text-center'>
+                                <Col sm="4" className='text-center'>
                                     <h4 style={{ color: "#f8c76495" }}>Mercancía gratuita</h4>
                                     {botelleros.length > 0 ? (
-                                        <Table striped bordered hover variant="dark">
+                                        <Table striped bordered hover >
                                             <thead>
                                                 <tr>
                                                     <th>Producto</th>

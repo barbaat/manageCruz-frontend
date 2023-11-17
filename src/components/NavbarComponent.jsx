@@ -50,7 +50,7 @@ export default function CustomNavbar() {
           <img src={logo} alt="Logo" style={{ width: '60px', height: '60px' }} />
         </Navbar.Brand>
         <Navbar.Brand>
-          <Button className='btn btn-primary' onClick={() => setShowModal(true)}> Ver información acerca del proyecto </Button>
+          <Button className='btn btn-primary' onClick={() => setShowModal(true)}> + info </Button>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarNav" className="center-toggle" />
         <Navbar.Collapse id="navbarNav" >

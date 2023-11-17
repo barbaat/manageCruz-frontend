@@ -11,7 +11,8 @@ import { BsFillTrash3Fill, BsPencilSquare } from "react-icons/bs";
 export default function UserDetails() {
   const [user, setUser] = useState([]);
   const [userLog, setUserLog] = useState([]);
-  const [casetas, setCasetas] = useState([]);
+  const [casetasPropietario, setCasetasPropietario] = useState([]);
+  const [casetasComercial, setCasetasComercial] = useState([]);
   const { username } = useParams();
 
   useEffect(() => {
@@ -22,7 +23,8 @@ export default function UserDetails() {
         try {
           const user = await userService.getUser(username);
           setUser(user);
-          setCasetas(user.casetas);
+          setCasetasPropietario(user.casetas);
+          setCasetasComercial(user.casetasComercial);
           console.log(user);
         } catch (error) {
           console.log('Error al obtener el usuario:', error);
@@ -89,13 +91,32 @@ export default function UserDetails() {
                 )}
               </Col>
               <Col className="mx-auto text-center">
-                {casetas.length > 0 && (
+                {casetasPropietario.length > 0 && (
                   <>
                   <br />
-                    <h2 className="text-center"><strong>Casetas</strong></h2>
+                    <h2 className="text-center"><strong>Casetas de cliente</strong></h2>
                     <div>
                       <br />
-                      {casetas.map((caseta) => (
+                      {casetasPropietario.map((caseta) => (
+                        <>
+                          <Card key={caseta.id}>
+                            <Card.Body>
+                              <Card.Title>{caseta.calle} - {caseta.numero}</Card.Title>
+                            </Card.Body>
+                          </Card>
+                          <br />
+                        </>
+                      ))}
+                    </div>
+                  </>
+                )}
+                 {casetasComercial.length > 0 && (
+                  <>
+                  <br />
+                    <h2 className="text-center"><strong>Casetas de comercial</strong></h2>
+                    <div>
+                      <br />
+                      {casetasComercial.map((caseta) => (
                         <>
                           <Card key={caseta.id}>
                             <Card.Body>
